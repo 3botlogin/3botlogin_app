@@ -16,10 +16,10 @@ Config config;
 Future<void> main() async {
   config = Config(
       threeBotApiUrl: isInDebugMode
-          ? 'http://192.168.0.135:5000/api'
+          ? 'https://login.threefold.me/api'
           : 'https://login.threefold.me/api',
       openKycApiUrl: isInDebugMode
-          ? 'http://192.168.0.135:5005'
+          ? 'https://openkyc.live/'
           : 'https://openkyc.live/', // TODO: change me to a real open KYC url
   );
 
