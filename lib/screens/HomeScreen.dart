@@ -241,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   future: getDoubleName(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      return registered(context);
+                      return regisTered(context, snapshot.data);
                     } else
                       return notRegistered(context);
                   }),
@@ -255,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Column registered(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector(notifyParent: refresh)],
+     // children: <Widget>[AppSelector(notifyParent: refresh)],
     );
   }
 
@@ -281,20 +281,68 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Navigator.pushNamed(context, '/scan');
           },
         ),
-        RaisedButton(
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(10)),
-          padding: EdgeInsets.all(12),
-          child: Text(
-            "Recover Account",
-            style: TextStyle(color: Colors.white),
-          ),
-          color: Theme.of(context).accentColor,
-          onPressed: () {
-            Navigator.pushNamed(context, '/recover');
-          },
-        )
       ],
+    );
+  }
+
+  Column alreadyRegistered(BuildContext context, String data) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          Icons.check_circle,
+          size: 42.0,
+          color: Theme.of(context).accentColor,
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        Text(
+          'Hi ' + data,
+          style: TextStyle(fontSize: 24.0),
+        ),
+        SizedBox(
+          height: 24.0,
+        ),
+        Text('You are already registered.'),
+        Text('If you need to login you\'ll get a notification.'),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    );
+  }
+
+  Container regisTered(BuildContext context, String data) {
+    return Container(
+      child: 
+      Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          Icons.check_circle,
+          size: 42.0,
+          color: Theme.of(context).accentColor,
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        Text(
+          'Hi ' + data,
+          style: TextStyle(fontSize: 24.0),
+        ),
+        SizedBox(
+          height: 24.0,
+        ),
+        Text('You are already registered.'),
+        Text('If you need to login you\'ll get a notification.'),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    )
     );
   }
 }

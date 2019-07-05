@@ -38,7 +38,6 @@ class _AppSelectorState extends State<AppSelector> {
 
   Future launchApp(size, appId) async {
     try {
-      //final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
       var url = apps[appId]['cookieUrl'];
       var loadUrl = apps[appId]['url'];
 
