@@ -7,7 +7,7 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/widgets/AppSelector.dart';
+//import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';

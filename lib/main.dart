@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
         '/success': (context) => SuccessfulScreen(),
         '/profile': (context) => ProfileScreen(),
         '/error': (context) => ErrorScreen(),
-        '/recover': (context) => RecoverScreen()
+        //'/recover': (context) => RecoverScreen()
       },
     );
   }
