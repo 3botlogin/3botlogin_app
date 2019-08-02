@@ -7,7 +7,6 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
@@ -170,26 +169,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       appBar: AppBar(
         title: Text('3bot'),
         backgroundColor: hexColor,
-        leading: FutureBuilder(
-            future: getDoubleName(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return IconButton(
-                    tooltip: 'Apps',
-                    icon: const Icon(Icons.apps),
-                    onPressed: () {
-                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-                        if (flutterWebViewPlugin != null) {
-                          flutterWebViewPlugin.hide();
-                        }
-                      }
-                      setState(() {
-                        hexColor = Color(0xFF0f296a);
-                      });
-                    });
-              } else
-                return Container();
-            }),
+        // leading: FutureBuilder(
+        //     future: getDoubleName(),
+        //     builder: (BuildContext context, AsyncSnapshot snapshot) {
+        //       if (snapshot.hasData) {
+        //         return IconButton(
+        //             tooltip: 'Apps',
+        //             icon: const Icon(Icons.apps),
+        //             onPressed: () {
+        //               for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+        //                 if (flutterWebViewPlugin != null) {
+        //                   flutterWebViewPlugin.hide();
+        //                 }
+        //               }
+        //               setState(() {
+        //                 hexColor = Color(0xFF0f296a);
+        //               });
+        //             });
+        //       } else
+        //         return Container();
+        //     }),
         elevation: 0.0,
         actions: <Widget>[
           FutureBuilder(
@@ -255,7 +254,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Column registered(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector(notifyParent: refresh)],
+      children: [
+        Text('You are registered.'),
+        SizedBox(
+          height: 20,
+        ),
+        Text('If you need to login you\'ll get a notification.'),
+      ]
+      // children: <Widget>[AppSelector(notifyParent: refresh)],
     );
   }
 
