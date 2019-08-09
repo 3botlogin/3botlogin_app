@@ -103,7 +103,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                           "Unverified",
                                           style: TextStyle(color: Colors.grey),
                                         )
-                                      : Container(),
+                                      : null,
                                   onTap: !emailVerified
                                       ? sendVerificationEmail
                                       : null,
@@ -128,6 +128,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                 },
                               ),
                               
+                             Material(
+                                child: ListTile(
+                                  leading: Icon(Icons.lock),
+                                  title: Text("Change pincode"),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/changepin');
+                                  },
+                                ),
+                              ),
+
                               ExpansionTile(
                                 title: Text("Advanced settings"),
                                 children: <Widget>[

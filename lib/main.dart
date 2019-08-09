@@ -9,6 +9,7 @@ import 'package:threebotlogin/screens/RegistrationScreen.dart';
 import 'package:threebotlogin/screens/SuccessfulScreen.dart';
 import 'package:threebotlogin/screens/ErrorScreen.dart';
 import 'package:threebotlogin/screens/RecoverScreen.dart';
+import 'package:threebotlogin/screens/ChangePinScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:threebotlogin/services/userService.dart';
 
@@ -91,7 +92,8 @@ class MyApp extends StatelessWidget {
         '/success': (context) => SuccessfulScreen(),
         '/error': (context) => ErrorScreen(),
         '/recover': (context) => RecoverScreen(),
-        '/preference': (context) => PreferenceScreen()
+        '/preference': (context) => PreferenceScreen(),
+        '/changepin': (context) => ChangePinScreen()
       },
     );
   }

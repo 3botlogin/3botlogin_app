@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -44,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         print(visible);
 
         webViewResizer(visible);
-        print("alex is hier");
       },
     );
     WidgetsBinding.instance.addObserver(this);
