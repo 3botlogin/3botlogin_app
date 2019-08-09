@@ -17,6 +17,8 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -207,6 +209,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('3bot'),
         backgroundColor: hexColor,

@@ -9,6 +9,7 @@ import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/Scanner.dart';
 import 'package:threebotlogin/widgets/scopeDialog.dart';
+import 'package:threebotlogin/screens/Errorscreen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final Widget registrationScreen;
@@ -178,9 +179,10 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   showError() {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text('Something went wrong, please try again later.'),
-    ));
+    Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) =>
+                  ErrorScreen(errorMessage: "Oops something went wrong. We couldn't find the application. Please try again.", retryButton: true  ))
+    );
   }
 
   pinFilledIn(String value) {
@@ -206,7 +208,11 @@ class _ScanScreenState extends State<RegistrationScreen>
           scope['keys'] = {'keys': qrData['keys']};
         }
       }
-      showScopeDialog(context, scope, qrData['appId'], saveValues);
+      if (qrData['appId'] != null) {
+        showScopeDialog(context, scope, qrData['appId'], saveValues);
+      } else {
+        showError();
+      }
     }
   }
 
@@ -228,11 +234,13 @@ class _ScanScreenState extends State<RegistrationScreen>
 
     var signedHash = signData(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);
-
-    sendData(hash, await signedHash, await data, null).then((x) {
-      Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.of(context).pushNamed('/success');
-    });
+    
+    if (qrData['appId'] != null) {
+      sendData(hash, await signedHash, await data, null).then((x) {
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.of(context).pushNamed('/success');
+      });
+    }
   }
 
   _showInformation() {
