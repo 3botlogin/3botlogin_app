@@ -55,7 +55,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                         ? PinField(
                             callback: (p) => changePin(p),
                           )
-                        : succesfulChange(),
+                        : successfulChange(),
                   ],
                 ),
               ),
@@ -102,7 +102,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
     }
   }
 
-  Widget succesfulChange() {
+  Widget successfulChange() {
     return Container(
         child: Column(
       children: <Widget>[
@@ -114,7 +114,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
           padding: EdgeInsets.all(20.0),
           child: Icon(
             Icons.check_circle,
-            color: Colors.green,
+            color: Theme.of(context).accentColor,
             size: 64,
           ),
         ),
@@ -133,7 +133,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-          color: Colors.green,
+          color: Theme.of(context).accentColor,
         )
       ],
     ));

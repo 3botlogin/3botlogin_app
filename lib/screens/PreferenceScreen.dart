@@ -6,6 +6,8 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 
+import 'package:threebotlogin/services/FingerprintService.dart';
+
 class PreferenceScreen extends StatefulWidget {
   PreferenceScreen({Key key}) : super(key: key);
   _PreferenceScreenState createState() => _PreferenceScreenState();
@@ -15,6 +17,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   Map email;
   String doubleName = '';
   String phrase = '';
+  bool finger;
   bool emailVerified = false;
   bool showAdvancedOptions = false;
   Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
@@ -109,7 +112,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                       : null,
                                 ),
                               ),
-
                               FutureBuilder(
                                 future: getPhrase(),
                                 builder: (context, snapshot) {
@@ -119,7 +121,14 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                         trailing: Icon(Icons.visibility),
                                         leading: Icon(Icons.vpn_key),
                                         title: Text("Show Phrase"),
-                                        onTap: _showPinDialog,
+                                        onTap: () async {
+                                          if (!finger) {
+                                            _showPinDialog('phrase');
+                                          } else {
+                                            var isValue = await authenticate();
+                                            isValue ? _showPhrase() : null;
+                                          }
+                                        },
                                       ),
                                     );
                                   } else {
@@ -127,8 +136,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   }
                                 },
                               ),
-                              
-                             Material(
+                              Material(
                                 child: ListTile(
                                   leading: Icon(Icons.lock),
                                   title: Text("Change pincode"),
@@ -137,7 +145,18 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   },
                                 ),
                               ),
-
+                              Material(
+                                child: SwitchListTile(
+                                  secondary: Icon(Icons.fingerprint),
+                                  value: finger,
+                                  title: Text("Fingerprint"),
+                                  activeColor: Theme.of(context).accentColor,
+                                  onChanged: (bool newValue) {
+                                    _chooseDialogFingerprint(newValue);
+                                    finger = newValue;
+                                  },
+                                ),
+                              ),
                               ExpansionTile(
                                 title: Text("Advanced settings"),
                                 children: <Widget>[
@@ -170,6 +189,70 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
         ));
   }
 
+  void _chooseDialogFingerprint(isValue) async {
+    if (isValue) {
+      _showEnabledFingerprint();
+    } else {
+      _showPinDialog('fingerprint');
+    }
+
+    setState(() {});
+  }
+
+  void _showEnabledFingerprint() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            image: Icons.error,
+            title: "Enable Fingerprint",
+            description: new Text(
+                "If you enable fingerprint, anyone who has a registered fingerprint on this device will have access to your account."),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: new Text("Yes"),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  saveFingerprint(true);
+                },
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showDisableFingerprint() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            image: Icons.error,
+            title: "Disable Fingerprint",
+            description: new Text(
+                "Are you sure you want to deactivate fingerprint as authentication method?"),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: new Text("Yes"),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  saveFingerprint(false);
+                },
+              ),
+            ],
+          ),
+    );
+  }
+
   void _showDialog() {
     showDialog(
       context: context,
@@ -200,7 +283,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                     context,
                     ModalRoute.withName('/'),
                   );
-                  // setState(() {});
                 },
               ),
             ],
@@ -209,11 +291,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void sendVerificationEmail() async {
+    final snackBar = SnackBar(content: Text('Resending verification email...'));
+    _prefScaffold.currentState.showSnackBar(snackBar);
     await resendVerificationEmail();
-    final snackBar = SnackBar(
-        content: Text('Resending verification email...'),
-        duration: const Duration(seconds: 1));
-    Scaffold.of(context).showSnackBar(snackBar);
     _showResendEmailDialog();
   }
 
@@ -237,7 +317,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     );
   }
 
-  void _showPinDialog() {
+  void _showPinDialog(callbackParam) {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
@@ -247,6 +327,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
               padding: EdgeInsets.only(bottom: 32.0),
               child: PinField(
                 callback: checkPin,
+                callbackParam: callbackParam,
               ),
             ),
           ),
@@ -260,10 +341,17 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     ));
   }
 
-  Future checkPin(pin) async {
+  Future checkPin(pin, callbackParam) async {
     if (pin == await getPin()) {
       Navigator.pop(context);
-      _showPhrase();
+      switch (callbackParam) {
+        case 'phrase':
+          _showPhrase();
+          break;
+        case 'fingerprint':
+          _showDisableFingerprint();
+          break;
+      }
     } else {
       Navigator.pop(context);
       _prefScaffold.currentState.showSnackBar(SnackBar(
@@ -315,6 +403,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     getPhrase().then((seedPhrase) {
       setState(() {
         phrase = seedPhrase;
+      });
+    });
+    getFingerprint().then((fingerprint) {
+      setState(() {
+        if (fingerprint != null) {
+          finger = fingerprint;
+        } else {
+          finger = false;
+          saveFingerprint(finger);
+        }
       });
     });
   }

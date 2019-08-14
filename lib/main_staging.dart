@@ -36,7 +36,7 @@ void main() async {
       'color': 0xFF708fa0,
       'errorText': false
     },
-    {
+    /* {
       "content": Text(
         'NBH Digital Wallet',
         style: TextStyle(
@@ -115,7 +115,7 @@ void main() async {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
-    }
+    } */
   ];
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

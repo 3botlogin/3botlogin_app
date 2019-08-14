@@ -9,6 +9,7 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/widgets/scopeDialog.dart';
+import 'package:threebotlogin/services/FingerprintService.dart';
 
 class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
@@ -134,6 +135,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: TextStyle(fontSize: 16.0),
                               ))),
                           PinField(callback: (p) => pinFilledIn(p)),
+                          IconButton(
+                            icon: Icon(Icons.fingerprint),
+                            onPressed: fingerprintAuthenticated(),
+                          ),
                           FlatButton(
                             child: Text(
                               "It wasn\'t me - cancel",
@@ -163,6 +168,28 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       selectedImageId = imageId;
     });
+  }
+
+  fingerprintAuthenticated() async {
+    scope['doubleName'] = await getDoubleName();
+    if (widget.message['scope'] != null) {
+      if (widget.message['scope'].contains('user:email')) {
+        scope['email'] = await getEmail();
+      }
+
+      if (widget.message['scope'].contains('user:keys')) {
+        scope['keys'] =
+            await getKeys(widget.message['appId'], scope['doubleName']);
+      }
+    }
+    var isSuccessfull = await authenticate();
+    if (isSuccessfull) {
+      showScopeDialog(context, scope, widget.message['appId'], sendIt,
+          cancelCallback: cancelIt);
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+          SnackBar(content: Text('Oops... that\'s the wrong emoji')));
+    }
   }
 
   pinFilledIn(p) async {

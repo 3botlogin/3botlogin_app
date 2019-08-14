@@ -7,7 +7,9 @@ class PinField extends StatefulWidget {
   final Widget pinField;
   final int pinLength = 4;
   final callback;
-  PinField({Key key, this.pinField, this.callback}) : super(key: key);
+  final callbackParam;
+  PinField({Key key, this.pinField, this.callback, this.callbackParam})
+      : super(key: key);
   _PinFieldState createState() => _PinFieldState();
 }
 
@@ -69,9 +71,8 @@ class _PinFieldState extends State<PinField> {
       String buttonText = possibleInput[i];
       if (buttonText == 'C')
         return buildNumberPin(possibleInput[i], context,
-            backgroundColor: input.length >= 1
-                ? Colors.yellow[700]
-                : Colors.yellow[200]);
+            backgroundColor:
+                input.length >= 1 ? Colors.yellow[700] : Colors.yellow[200]);
       else if (buttonText == 'OK')
         return buildNumberPin(possibleInput[i], context,
             backgroundColor: input.length >= widget.pinLength
@@ -128,11 +129,19 @@ class _PinFieldState extends State<PinField> {
   }
 
   void onOk() {
+    print(widget.callback);
+    print(widget.callbackParam);
+
     HapticFeedback.mediumImpact();
     String pin = "";
     input.forEach((char) => pin += char);
     logger.log(pin);
-    widget.callback(pin);
+    if (widget.callbackParam != null) {
+      widget.callback(pin, widget.callbackParam);
+    } else {
+      widget.callback(pin);
+    }
+
     setState(() {
       input = List();
     });

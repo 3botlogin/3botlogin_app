@@ -102,6 +102,17 @@ Future<String> getLoginToken() async {
   return prefs.getString('loginToken');
 }
 
+Future saveFingerprint(fingerprint) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('fingerprint');
+  prefs.setBool('fingerprint', fingerprint);
+}
+
+Future getFingerprint() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('fingerprint');
+}
+
 Future<void> clearData() async {
   final prefs = await SharedPreferences.getInstance();
   
