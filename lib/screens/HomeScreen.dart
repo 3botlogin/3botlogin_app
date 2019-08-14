@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       });
     });
 
-    if(initialLink == null) {
+    if (initialLink == null) {
       getLinksStream().listen((String incomingLink) {
         checkWhatPageToOpen(Uri.parse(incomingLink));
       });
@@ -85,8 +85,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(
-                          0, 75, size.width, size.height - 75),
+                      Rect.fromLTWH(0, 75, size.width, size.height - 75),
                       instance: keyboardUsedApp),
                   print(keyboardSize)
                 }
@@ -98,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     if (initialLink != null) {
       checkWhatPageToOpen(Uri.parse(initialLink));
-    } 
+    }
   }
 
   checkWhatPageToOpen(Uri link) {
@@ -133,10 +132,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => LoginScreen(
-                      jsonDecode(attempt.body),
-                      closeWhenLoggedIn: true
-                    ),
+                builder: (context) => LoginScreen(jsonDecode(attempt.body),
+                    closeWhenLoggedIn: true),
               ),
             );
           }
@@ -167,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
-      
+
       String dn = await getDoubleName();
 
       checkIfThereAreLoginAttempts(dn);
@@ -209,33 +206,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       appBar: AppBar(
         title: Text('3bot'),
         backgroundColor: hexColor,
-        leading: FutureBuilder(
-            future: getDoubleName(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return Visibility(
-                    visible: showButton,
-                    child: IconButton(
-                        tooltip: 'Apps',
-                        icon: const Icon(Icons.apps),
-                        onPressed: () {
-                          SystemChannels.textInput
-                              .invokeMethod('TextInput.hide');
-                          for (var flutterWebViewPlugin
-                              in flutterWebViewPlugins) {
-                            if (flutterWebViewPlugin != null) {
-                              flutterWebViewPlugin.hide();
-                              lastAppUsed = null;
-                              showButton = false;
-                            }
-                          }
-                          setState(() {
-                            hexColor = Color(0xFF0f296a);
-                          });
-                        }));
-              } else
-                return Container();
-            }),
         elevation: 0.0,
         actions: <Widget>[
           FutureBuilder(
@@ -299,7 +269,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Column registered(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector(notifyParent: refresh)],
+      children: <Widget>[
+        Text('You are registered.'),
+        SizedBox(
+          height: 20,
+        ),
+        Text('If you need to login you\'ll get a notification.'),
+      ],
     );
   }
 
