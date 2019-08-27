@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -167,7 +168,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       showError();
     } else {
       var signedDeviceId = signData(deviceId, privateKey);
-      sendScannedFlag(hash, await signedDeviceId).then((response) {
+      sendScannedFlag(hash, await signedDeviceId, doubleName).then((response) {
         sliderAnimationController.forward();
         setState(() {
           helperText = "Choose new pin";
@@ -176,6 +177,7 @@ class _ScanScreenState extends State<RegistrationScreen>
         print(e);
         showError();
       });
+      updateDeviceId(await messaging.getToken(), doubleName, privateKey);
     }
   }
 
@@ -222,7 +224,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     }
 
     if (qrData['appId'] == null) {
-      qrData['appId'] = 'threefold';
+      qrData['appId'] = 'localhost:8081'; // needs to be changed in default domain
     }
 
     var initialPermissions = jsonDecode(await getScopePermissions());
@@ -278,18 +280,26 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
     savePhrase(phrase);
     saveFingerprint(false);
+    print('publickey $publicKey');
+    if (publicKey != null) {
+      try {
+        var signedHash = signData(hash, privateKey);
+        var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
-    try {
-      var signedHash = signData(hash, privateKey);
-      var data = encrypt(jsonEncode(scope), publicKey, privateKey);
-
-      sendData(hash, await signedHash, await data, null).then((x) {
+        sendData(hash, await signedHash, await data, null).then((x) {
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+          Navigator.of(context).pushNamed('/success');
+        });
+      } catch (exception) {
         Navigator.popUntil(context, ModalRoute.withName('/'));
-        Navigator.of(context).pushNamed('/success');
-      });
-    } catch (exception) {
+        showError();
+      }
+    } else {
+      print('signing $doubleName');
+      sendRegisterSign(doubleName);
+
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      showError();
+      Navigator.of(context).pushNamed('/success');
     }
   }
 

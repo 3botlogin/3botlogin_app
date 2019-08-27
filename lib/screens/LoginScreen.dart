@@ -54,7 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showPinfield = false;
   bool showScopeAndEmoji = false;
 
-  bool _isAuthenticated;
 
   // PreferenceDialog scopeListc = new PreferenceDialog(scope, appId, callback);
 
@@ -152,6 +151,8 @@ class _LoginScreenState extends State<LoginScreen> {
       'E',
       'F'
     ];
+
+    print('scope jasper $scope');
 
     return Container(
       child: Padding(
@@ -297,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         setState(() {
           print('send it again');
-          sendIt();
+          // sendIt();
         });
         _scaffoldKey.currentState.showSnackBar(
             SnackBar(content: Text('Oops... that\'s the wrong emoji')));
@@ -364,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);
-    if (selectedImageId == correctImage || isMobile() || _isAuthenticated) {
+    if (selectedImageId == correctImage || isMobile()) {
       if (widget.closeWhenLoggedIn) {
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         Navigator.popUntil(context, ModalRoute.withName('/'));

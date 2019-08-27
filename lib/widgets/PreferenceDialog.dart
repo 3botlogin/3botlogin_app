@@ -32,8 +32,11 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
 
   Future<dynamic> getPermissions(app, scope) async {
     var json = jsonDecode(await getScopePermissions());
+    print('permissions $json');
     var sc = scope[0];
-    return json[app][sc];
+    if (json[app] != null) {
+      return json[app][sc];
+    } 
   }
 
   Future<dynamic> changePermission(app, scope, value) async {

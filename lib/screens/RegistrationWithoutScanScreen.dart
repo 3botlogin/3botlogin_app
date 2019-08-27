@@ -38,7 +38,7 @@ class _RegistrationWithoutScanScreen
 
   Future sendFlag(pk) async {
     sendScannedFlag(widget.initialData['state'],
-        await signData(deviceId, widget.initialData['privateKey']));
+        await signData(deviceId, widget.initialData['privateKey']), widget.initialData['doubleName']);
   }
 
   @override
@@ -190,7 +190,7 @@ class _RegistrationWithoutScanScreen
                   sendScannedFlag(
                       widget.initialData['state'],
                       await signData(
-                          deviceId, widget.initialData['privateKey']));
+                          deviceId, widget.initialData['privateKey']), widget.initialData['doubleName']);
                 },
               ),
             ],
