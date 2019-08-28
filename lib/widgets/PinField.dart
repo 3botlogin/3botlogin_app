@@ -148,7 +148,7 @@ class _PinFieldState extends State<PinField> {
     input.forEach((char) => pin += char);
     logger.log(pin);
     if (widget.callbackParam != null) {
-      widget.callback(pin, callbackParam: widget.callbackParam);
+      widget.callback(pin, widget.callbackParam);
     } else {
       widget.callback(pin);
     }

@@ -224,7 +224,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     }
 
     if (qrData['appId'] == null) {
-      qrData['appId'] = 'localhost:8081'; // needs to be changed in default domain
+      qrData['appId'] = 'localhost:8081'; // needs to be changed in default domain 
     }
 
     var initialPermissions = jsonDecode(await getScopePermissions());

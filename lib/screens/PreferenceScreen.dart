@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/services/fingerprintService.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
@@ -123,8 +124,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                           if (!finger) {
                                             _showPinDialog('phrase');
                                           } else {
-                                            // var isValue = await authenticate();
-                                            // isValue ? _showPhrase() : null;
+                                            var isValue = await authenticate();
+                                            isValue ? _showPhrase() : null;
                                           }
                                         },
                                       ),
@@ -156,7 +157,10 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                 ),
                               ),
                               ExpansionTile(
-                                title: Text("Advanced settings", style: TextStyle(color: Colors.black),),
+                                title: Text(
+                                  "Advanced settings",
+                                  style: TextStyle(color: Colors.black),
+                                ),
                                 children: <Widget>[
                                   Material(
                                     child: ListTile(
@@ -193,8 +197,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     } else {
       _showPinDialog('fingerprint');
     }
-
-    setState(() {});
   }
 
   void _showEnabledFingerprint() {
@@ -208,15 +210,19 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             actions: <Widget>[
               FlatButton(
                 child: new Text("Cancel"),
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
+                  finger = false;
+                  await saveFingerprint(false);
+                  setState(() {});
                 },
               ),
               FlatButton(
                 child: new Text("Yes"),
                 onPressed: () async {
                   Navigator.pop(context);
-                  saveFingerprint(true);
+                  await saveFingerprint(true);
+                  setState(() {});
                 },
               ),
             ],
@@ -237,13 +243,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 child: new Text("Cancel"),
                 onPressed: () {
                   Navigator.pop(context);
+                  finger = true;
+                  setState(() {});
                 },
               ),
               FlatButton(
                 child: new Text("Yes"),
                 onPressed: () async {
                   Navigator.pop(context);
-                  saveFingerprint(false);
+                  await saveFingerprint(false);
+                  setState(() {});
                 },
               ),
             ],
@@ -281,7 +290,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                     context,
                     ModalRoute.withName('/'),
                   );
-                  // setState(() {});
                 },
               ),
             ],
@@ -327,6 +335,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
               padding: EdgeInsets.only(bottom: 32.0),
               child: PinField(
                 callback: checkPin,
+                callbackParam: callbackParam,
               ),
             ),
           ),
@@ -340,7 +349,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     ));
   }
 
-  Future checkPin(pin, callbackParam) async {
+  void checkPin(pin, callbackParam) async {
     if (pin == await getPin()) {
       Navigator.pop(context);
       switch (callbackParam) {
@@ -357,6 +366,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
         content: Text('Pin invalid'),
       ));
     }
+    setState(() {});
   }
 
   void _showPhrase() async {

@@ -120,8 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (jsonDecode(widget.message['scope']).containsKey('keys')) {
-        scope['keys'] =
-            await getKeys(widget.message['appId'], scope['doubleName']);
+        scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
       }
     }
     print('scope $scope');
