@@ -111,14 +111,10 @@ Future<int> checkVersionNumber(BuildContext context, String version) async {
     logger.log("Can't connect to server: " + error.toString());
   }
 
-  if (minVersion == null) {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                ErrorScreen(errorMessage: "Can't connect to server.")));
+  if (minVersion == null){
     return -1;
-  } else {
+  }else if (minVersion != null) {
+  
     try {
       var min = int.parse(minVersion);
       var current = int.parse(version);

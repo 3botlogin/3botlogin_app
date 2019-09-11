@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,11 +12,13 @@ import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
+import '../widgets/CustomDialog.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -30,9 +33,45 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String doubleName = '';
   var email;
   String initialLink;
+  bool errorDialogShown = false;
+  var popupContext = null;
+
+  Future<http.Response> healthcheck() async {
+    try {
+      await http.get(config.threeBotApiUrl + '/healthcheck', headers: null);
+      if (popupContext != null) {
+        Navigator.pop(popupContext);
+        popupContext = null;
+      }
+    } catch (e) {
+      if (this.context != null) {
+        popupContext = this.context;
+        if (!this.errorDialogShown) {
+          this.errorDialogShown = true;
+          showDialog(
+              barrierDismissible: false,
+              context: this.context,
+              builder: (BuildContext context) => CustomDialog(
+                    image: Icons.error,
+                    title: "Connection Error!",
+                    description: new Text(
+                      "Unable to connect to Server!",
+                      textAlign: TextAlign.center,
+                    ),
+                  )).then((val) {
+            this.errorDialogShown = false;
+          });
+        }
+      }
+    }
+  }
 
   @override
   void initState() {
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      healthcheck();
+    });
+
     getEmail().then((e) {
       setState(() {
         email = e;
@@ -244,14 +283,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
     } else if (response == 0) {
       Navigator.pushReplacementNamed(context, '/error');
-    } else if (response == -1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              ErrorScreen(errorMessage: "Can't connect to server."),
-        ),
-      );
     }
   }
 
@@ -363,11 +394,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ConstrainedBox notRegistered(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxHeight: double.infinity,
-        maxWidth: double.infinity,
-        minHeight: 250,
-        minWidth: 250
-      ),
+          maxHeight: double.infinity,
+          maxWidth: double.infinity,
+          minHeight: 250,
+          minWidth: 250),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
