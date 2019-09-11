@@ -173,7 +173,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                     color: Colors.grey[200],
                   ),
                   FlatButton(
-                    onPressed: onStepContinue,
+                    onPressed: (){FocusScope.of(context).unfocus(); onStepContinue();},
                     child: const Text('CONTINUE'),
                     color: Colors.grey[200],
                   ),
@@ -197,13 +197,35 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             content: Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: ReuseableTextFieldStep(
-                  titleText: 'Hi! What is your 3bot name',
-                  labelText: 'Doublename',
-                  typeText: TextInputType.text,
-                  controller: doubleNameController,
-                  suffixText: '.3bot',
-                ),
+                child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          'Hi! What is your 3bot name',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Divider(
+          height: 50,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.5),
+          child: TextField(
+            autofocus: true,
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Doublename',
+              suffixText: '.3bot',
+              suffixStyle: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            controller: doubleNameController,
+          ),
+        ),
+        Divider(
+          height: 50,
+        ),
+      ],
+    )
               ),
             ),
           ),
