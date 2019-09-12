@@ -16,7 +16,6 @@ class RecoverScreen extends StatefulWidget {
 }
 
 class _RecoverScreenState extends State<RecoverScreen> {
-  final doubleNameController = TextEditingController();
   final emailController = TextEditingController();
   final seedPhrasecontroller = TextEditingController();
 
@@ -37,7 +36,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     return md5.convert(utf8.encode(input)).toString();
   }
 
-  checkSeedPhrase(doubleName, seedPhrase) async {
+  checkSeedPhrase(seedPhrase) async {
     checkSeedLength(seedPhrase);
     var keys = await generateKeysFromSeedPhrase(seedPhrase);
 
@@ -45,7 +44,11 @@ class _RecoverScreenState extends State<RecoverScreen> {
       privateKey = keys['privateKey'];
     });
 
-    var userKInfoResult = await getUserInfo(doubleName);
+    String encoded = Uri.encodeComponent(keys['publicKey'].toString());
+    encoded = Uri.encodeComponent(encoded);
+    logger.log(encoded);
+
+    var userKInfoResult = await getUserInfoByPublicKey(encoded);
 
     if (userKInfoResult.statusCode != 200) {
       throw new Exception('User not found');
@@ -53,9 +56,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
     var body = json.decode(userKInfoResult.body);
 
-    if (body['publicKey'] != keys['publicKey']) {
-      throw new Exception('Keys do not correspond to given user');
-    }
+    doubleName = body['doublename'];
   }
 
   continueRecoverAccount() async {
@@ -97,7 +98,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   @override
   void dispose() {
-    doubleNameController.dispose();
     emailController.dispose();
     seedPhrasecontroller.dispose();
     super.dispose();
@@ -159,24 +159,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
                 'Please insert your info',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.5),
-              child: TextFormField(
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Doublename',
-                    suffixText: '.3bot',
-                    suffixStyle: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  controller: doubleNameController,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Enter your Doublename';
-                    }
-                    return null;
-                  }),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 8.5),
@@ -250,13 +232,12 @@ class _RecoverScreenState extends State<RecoverScreen> {
                 FocusScope.of(context).requestFocus(new FocusNode());
                 setState(() {
                   _autoValidate = true;
-                  doubleName = doubleNameController.text + '.3bot';
                   emailFromForm = emailController.text;
                   seedPhrase = seedPhrasecontroller.text;
                 });
                 try {
                   if (emailFromForm != null && emailFromForm.isNotEmpty) {
-                    await checkSeedPhrase(doubleName, seedPhrase);
+                    await checkSeedPhrase(seedPhrase);
                     // await checkEmail(doubleName, (emailFromForm.toLowerCase()));
                     Navigator.pop(context);
                     await continueRecoverAccount();

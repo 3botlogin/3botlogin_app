@@ -142,6 +142,10 @@ Future getUserInfo(doubleName) {
      headers: requestHeaders);
 }
 
+Future getUserInfoByPublicKey(publickey) {
+  return http.get('$threeBotApiUrl/key/$publickey', headers: requestHeaders);
+}
+
 Future<http.Response> finishRegistration(String doubleName, String email, String sid, String publicKey) async {
 
   logger.log(doubleName + ' ' + sid + ' ' + email + ' ' + publicKey);
